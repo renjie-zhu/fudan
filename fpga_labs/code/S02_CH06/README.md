@@ -119,4 +119,4 @@ XExc_VectorTableEntry XExc_VectorTable[XIL_EXCEPTION_ID_LAST + 1] =
 
 ## 测试结果
 
-拨动SW0和SW1两个开关，从串口中观察到开关号被打印，说明中断被正确触发并捕捉。
+拨动SW0和SW1两个开关，从串口中观察到开关号被打印，说明中断被正确触发并处理。
