@@ -103,9 +103,9 @@ void hls_sobel(AXI_STREAM& INPUT_STREAM, AXI_STREAM& OUTPUT_STREAM, int rows, in
 在DDR中分配3段地址空间，分别存放HLS IP读写地址和显示内容的位置。
 
 ```C++
-#define SOBEL_S2MM		0x08000000
-#define SOBEL_MM2S		0x0A000000
-#define DISPLAY_MM2S	0x0C000000
+#define SOBEL_S2MM      0x08000000
+#define SOBEL_MM2S      0x0A000000
+#define DISPLAY_MM2S    0x0C000000
 ```
 
 配置VDMA寄存器示例，具体参考[MiZ-S02-SoC-base.pdf](../../reference/MiZ-S02-SoC-base.pdf)：
@@ -113,26 +113,26 @@ void hls_sobel(AXI_STREAM& INPUT_STREAM, AXI_STREAM& OUTPUT_STREAM, int rows, in
 ```C++
 void SOBEL_VDMA_setting(unsigned int width,unsigned int height,unsigned int s2mm_addr,unsigned int mm2s_addr)
 {
-	    //S2MM
-		Xil_Out32(SOBEL_VDMA + 0x30, 0x4); //reset   S2MM VDMA Control Register
-	    usleep(10);
-	    Xil_Out32(SOBEL_VDMA + 0x30, 0x0); //genlock
-	    Xil_Out32(SOBEL_VDMA + 0xAC,   s2mm_addr);//S2MM Start Addresses
-	    Xil_Out32(SOBEL_VDMA + 0xAC+4, s2mm_addr);
-	    Xil_Out32(SOBEL_VDMA + 0xAC+8, s2mm_addr);
-	    Xil_Out32(SOBEL_VDMA + 0xA4, width*4);//S2MM Horizontal Size
-	    Xil_Out32(SOBEL_VDMA + 0xA8, width*4);//S2MM Frame Delay and Stride
-	    Xil_Out32(SOBEL_VDMA + 0x30, 0x3);//S2MM VDMA Control Register
-	    Xil_Out32(SOBEL_VDMA + 0xA0, height);//S2MM Vertical Size  start an S2M
+        //S2MM
+        Xil_Out32(SOBEL_VDMA + 0x30, 0x4); //reset   S2MM VDMA Control Register
+        usleep(10);
+        Xil_Out32(SOBEL_VDMA + 0x30, 0x0); //genlock
+        Xil_Out32(SOBEL_VDMA + 0xAC,   s2mm_addr);//S2MM Start Addresses
+        Xil_Out32(SOBEL_VDMA + 0xAC+4, s2mm_addr);
+        Xil_Out32(SOBEL_VDMA + 0xAC+8, s2mm_addr);
+        Xil_Out32(SOBEL_VDMA + 0xA4, width*4);//S2MM Horizontal Size
+        Xil_Out32(SOBEL_VDMA + 0xA8, width*4);//S2MM Frame Delay and Stride
+        Xil_Out32(SOBEL_VDMA + 0x30, 0x3);//S2MM VDMA Control Register
+        Xil_Out32(SOBEL_VDMA + 0xA0, height);//S2MM Vertical Size  start an S2M
 
-		//MM2S
-	    Xil_Out32(SOBEL_VDMA + 0x00,0x00000003); // enable circular mode
-	    Xil_Out32(SOBEL_VDMA + 0x5c,mm2s_addr); // start address
-	    Xil_Out32(SOBEL_VDMA + 0x60,mm2s_addr); // start address
-	    Xil_Out32(SOBEL_VDMA + 0x64,mm2s_addr); // start address
-	    Xil_Out32(SOBEL_VDMA + 0x58,(width*4)); // h offset
-	    Xil_Out32(SOBEL_VDMA + 0x54,(width*4)); // h size
-	    Xil_Out32(SOBEL_VDMA + 0x50,height); // v size
+        //MM2S
+        Xil_Out32(SOBEL_VDMA + 0x00,0x00000003); // enable circular mode
+        Xil_Out32(SOBEL_VDMA + 0x5c,mm2s_addr); // start address
+        Xil_Out32(SOBEL_VDMA + 0x60,mm2s_addr); // start address
+        Xil_Out32(SOBEL_VDMA + 0x64,mm2s_addr); // start address
+        Xil_Out32(SOBEL_VDMA + 0x58,(width*4)); // h offset
+        Xil_Out32(SOBEL_VDMA + 0x54,(width*4)); // h size
+        Xil_Out32(SOBEL_VDMA + 0x50,height); // v size
 }
 ```
 
@@ -141,31 +141,31 @@ void SOBEL_VDMA_setting(unsigned int width,unsigned int height,unsigned int s2mm
 ```C++
 void show_img(u32 x, u32 y, u32 disp_base_addr, const unsigned char * addr, u32 size_x, u32 size_y,u32 type)
 {
-	u32 i=0;
-	u32 j=0;
-	u32 r,g,b;
-	u32 start_addr=disp_base_addr;
-	start_addr = disp_base_addr + 4*x + y*4*DIS_X;
-	for(j=0;j<size_y;j++)
-	{
-		for(i=0;i<size_x;i++)
-		{
-			if(type==0)
-			{
-				b = *(addr+(i+j*size_x)*4+2);
-				g = *(addr+(i+j*size_x)*4+1); 
-				r = *(addr+(i+j*size_x)*4); 
-			}
-			else
-			{
-				b = *(addr+(i+j*size_x)*4+1); 
-				g = *(addr+(i+j*size_x)*4+2); 
-				r = *(addr+(i+j*size_x)*4+3); 
-			}
-			Xil_Out32((start_addr+(i+j*DIS_X)*4),((r<<16)|(g<<8)|(b<<0)|0x0));
-		}
-	}
-	Xil_DCacheFlush();
+    u32 i=0;
+    u32 j=0;
+    u32 r,g,b;
+    u32 start_addr=disp_base_addr;
+    start_addr = disp_base_addr + 4*x + y*4*DIS_X;
+    for(j=0;j<size_y;j++)
+    {
+        for(i=0;i<size_x;i++)
+        {
+            if(type==0)
+            {
+                b = *(addr+(i+j*size_x)*4+2);
+                g = *(addr+(i+j*size_x)*4+1); 
+                r = *(addr+(i+j*size_x)*4); 
+            }
+            else
+            {
+                b = *(addr+(i+j*size_x)*4+1); 
+                g = *(addr+(i+j*size_x)*4+2); 
+                r = *(addr+(i+j*size_x)*4+3); 
+            }
+            Xil_Out32((start_addr+(i+j*DIS_X)*4),((r<<16)|(g<<8)|(b<<0)|0x0));
+        }
+    }
+    Xil_DCacheFlush();
 }
 
 // ...
