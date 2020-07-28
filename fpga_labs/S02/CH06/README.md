@@ -5,7 +5,7 @@
 
 在PL端通过开关产生中断，PS端接受中断后通过串口打印出产生中断的开关号，以此了解Zynq的中断原理。
 
-*参考《Zynq SoC修炼秘籍》*
+参考[MiZ-S02-SoC-base.pdf](../../reference/MiZ-S02-SoC-base.pdf)
 
 
 ## Zynq中断介绍
@@ -97,7 +97,7 @@ _vector_table:
 
 这个中断表在C程序中是一个结构数组，在standalone/xil_exception.c中定义，下标为5的位置存放中断时希望执行的函数句柄：
 
-```
+```C++
 XExc_VectorTableEntry XExc_VectorTable[XIL_EXCEPTION_ID_LAST + 1] =
 {
 	{Xil_ExceptionNullHandler, NULL},
