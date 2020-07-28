@@ -135,6 +135,9 @@ void SOBEL_VDMA_setting(unsigned int width,unsigned int height,unsigned int s2mm
 	    Xil_Out32(SOBEL_VDMA + 0x50,height); // v size
 }
 ```
+
+以下函数将两部分内存中的数据搬运到`DISPLAY_MM2S`内存区域，使处理后的图像占用屏幕左边512x512大小的空间，原图占用右边512x512大小的空间。
+
 ```C++
 void show_img(u32 x, u32 y, u32 disp_base_addr, const unsigned char * addr, u32 size_x, u32 size_y,u32 type)
 {
@@ -149,15 +152,15 @@ void show_img(u32 x, u32 y, u32 disp_base_addr, const unsigned char * addr, u32 
 		{
 			if(type==0)
 			{
-				b = *(addr+(i+j*size_x)*4+2); //08
-				g = *(addr+(i+j*size_x)*4+1); //60
-				r = *(addr+(i+j*size_x)*4); //01
+				b = *(addr+(i+j*size_x)*4+2);
+				g = *(addr+(i+j*size_x)*4+1); 
+				r = *(addr+(i+j*size_x)*4); 
 			}
 			else
 			{
-				b = *(addr+(i+j*size_x)*4+1); //08
-				g = *(addr+(i+j*size_x)*4+2); //60
-				r = *(addr+(i+j*size_x)*4+3); //01
+				b = *(addr+(i+j*size_x)*4+1); 
+				g = *(addr+(i+j*size_x)*4+2); 
+				r = *(addr+(i+j*size_x)*4+3); 
 			}
 			Xil_Out32((start_addr+(i+j*DIS_X)*4),((r<<16)|(g<<8)|(b<<0)|0x0));
 		}
@@ -170,3 +173,7 @@ show_img(0,0,DISPLAY_MM2S,(void*)SOBEL_S2MM,512,512,0);
 show_img(522,0,DISPLAY_MM2S,(void*)SOBEL_MM2S,512,512,1);
 
 ```
+
+## 测试结果
+
+![wechat_20200728074704](https://raw.githubusercontent.com/wxiang357/Image/master/wechat_20200728074704.jpg)
